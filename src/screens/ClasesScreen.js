@@ -10,12 +10,14 @@ import {formatearPrecio, CLASES, NIVELES} from '../data/clases'
 import NivelChip from '../components/NivelChip';
 import Card from '../components/Card';
 import useResposive from '../hooks/useResponsive';
+import EstadoVacio from '../components/EstadoVacio';
 
 
 export default function ClasesScreen ({ navigation }){
     const insets = useSafeAreaInsets();
+    const {columnas, paddingHorizontal} = useResposive ();
 
-    const { nivel, setNivel} = useState ('todos');
+    const [ nivel, setNivel] = useState ('todos');
     const [busqueda, setBusqueda] = useState('');
 
     const resultados = useMemo(()=>{
@@ -89,9 +91,24 @@ export default function ClasesScreen ({ navigation }){
 
                 )}
                 contentContainerStyle={{
-                    paddingHorizontal,
+                    paddingHorizontal:,  
                     flexGrow:1
                 }}
+                numColumns={columnas}
+                ListEmptyComponent={
+                    <EstadoVacio
+                        icono="search-outline"
+                        titulo="No econtramos resultados"
+                        mensaje="prueba con otra combinacion de palabras para la buequeda"
+                        onAction={()=>{
+                            setNivel('Todos');
+                            setBusqueda('');
+                        }}
+                    
+                    />
+
+                }
+
 
             />
 

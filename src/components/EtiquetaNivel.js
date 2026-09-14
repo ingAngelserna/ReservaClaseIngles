@@ -12,12 +12,12 @@ export  default function  EtiquetaNivel({ nivel }){
     )
 }
 
-const style = StyleSheet.create({ 
+const styles = StyleSheet.create({ 
     contenedor: {
         alignSelf:'auto',
         paddingVertical: 3,
         paddingHorizontal: spacing.md,
-        borderwidth: 1
+        borderWidth: 1
 
     },
     texto: {fontSize: 11,fontWeight: '700 ', letterSpacing: 0.3}

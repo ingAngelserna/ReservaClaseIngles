@@ -12,13 +12,13 @@ export default function Card({clase, onPress}){
     return (
         <Pressable onPress={onPress}>
             <Image source={{uri: clase.image}}/>
-            <view>
+            <View>
                 <EtiquetaNivel nivel={clase.nivel}/>
                 <Text  style= {styles.titulo}> {clase.titulo}</Text>
                 <Text> {clase.nivel}</Text>
-                <Text> {clase.profesor.nombre}</Text>
-                <Text> formatearPrecio({clase.precio})</Text>
-            </view>
+                <Text> {clase?.profesor?.nombre}</Text>
+                <Text> {formatearPrecio(clase.precio)}</Text>
+            </View>
         </Pressable>
     )
 
