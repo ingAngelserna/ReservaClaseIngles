@@ -1,29 +1,25 @@
-import React from 'react'
+import React from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
 import { colors, spacing, radius } from '../theme';
 
-
-export default function NivelChip ({etiquta, activo, onPress}){
+// Corregimos "etiquta" por "etiqueta"
+export default function NivelChip({ etiqueta, activo, onPress }) {
   return (
     <Pressable
       onPress={onPress}
-      style={({pressed})=> [
+      style={({ pressed }) => [
         style.chip,
         activo && style.chipActivo,
-        pressed && {opacity: 0.7}
+        pressed && { opacity: 0.7 }
       ]}
     >
-
-
-      <Text style={[style.texto, activo && style.textoActivo]}> {etiquta}</Text>
-
+      {/* Usamos la variable corregida */}
+      <Text style={[style.texto, activo && style.textoActivo]}>
+        {etiqueta}
+      </Text>
     </Pressable>
-
-  )        
-
+  );
 }
-
-
 
 const style = StyleSheet.create({
   chip: {
@@ -39,6 +35,12 @@ const style = StyleSheet.create({
     backgroundColor: colors.primario,
     borderColor: colors.primario,
   },
-  texto: { fontSize: 13, fontWeight: '600', color: colors.textoSuave },
-  textoActivo: { color: '#FFFFFF' },
+  texto: { 
+    fontSize: 13, 
+    fontWeight: '600', 
+    color: colors.textoSuave 
+  },
+  textoActivo: { 
+    color: '#ad93d9' 
+  },
 });

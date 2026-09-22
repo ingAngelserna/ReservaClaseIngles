@@ -1,31 +1,73 @@
 import React from 'react';
-import { View, Text, Image, Pressable, StyleSheet} from 'react-native';
+import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import EtiquetaNivel from './EtiquetaNivel';
-import { colors,  spacing, typography} from '../theme';
-import { formatearPrecio, CLASES } from '../data/clases';
+import { colors, spacing } from '../theme';
+import { formatearPrecio } from '../data/clases';
 
-
-
-export default function Card({clase, onPress}){
-
-
+export default function Card({ clase, onPress }) {
     return (
-        <Pressable onPress={onPress}>
-            <Image source={{uri: clase.image}}/>
-            <View>
-                <EtiquetaNivel nivel={clase.nivel}/>
-                <Text  style= {styles.titulo}> {clase.titulo}</Text>
-                <Text> {clase.nivel}</Text>
-                <Text> {clase?.profesor?.nombre}</Text>
-                <Text> {formatearPrecio(clase.precio)}</Text>
+        <Pressable style={styles.tarjeta} onPress={onPress}>
+            <Image 
+                source={{ uri: clase.imagen }} 
+                style={styles.imagen} 
+                resizeMode="cover" 
+            />
+            
+            <View style={styles.contenido}>
+                <EtiquetaNivel nivel={clase.nivel} />
+                
+                <Text style={styles.titulo} numberOfLines={2}>
+                    {clase.titulo}
+                </Text>
+                
+                <Text style={styles.profesor}>
+                    {clase?.profesor?.nombre}
+                </Text>
+                
+                <Text style={styles.precio}>
+                    {formatearPrecio(clase.precio)}
+                </Text>
             </View>
         </Pressable>
-    )
-
+    );
 }
 
 const styles = StyleSheet.create({
-    titulo: {fontSize: 16, color: colors.texto}
-
-
-})
+    tarjeta: {
+        backgroundColor: colors.superficie || '#ffffff',
+        borderRadius: 12,
+        margin: 8,
+        flex: 1, 
+        overflow: 'hidden', 
+        elevation: 3, 
+        shadowColor: '#000', 
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    imagen: {
+        width: '100%',
+        height: 140, 
+        backgroundColor: '#e0e0e0',
+    },
+    contenido: {
+        padding: 12,
+        gap: 4,
+    },
+    titulo: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: colors.texto || '#333333',
+        marginTop: 4,
+    },
+    profesor: {
+        fontSize: 14,
+        color: '#666666',
+    },
+    precio: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: colors.primario || '#007BFF',
+        marginTop: 4,
+    }
+});

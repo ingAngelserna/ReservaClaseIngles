@@ -1,14 +1,14 @@
 import { useWindowDimensions } from "react-native";
 
-export default function useResposive(){
-    const {Width, height} = useWindowDimensions();
-    const esTablet = Width >= 768
-    const esHorizontal = Width > height
+export default function useResponsive(){
+    const {width, height} = useWindowDimensions();
+    const esTablet = width >= 768;
+    const esHorizontal = width > height;
 
-    return{
-        Width, height, esTablet, esHorizontal,
+    return {
+        width, height, esTablet, esHorizontal,
         columnas: esTablet ? 2 : 1,
-        ancho:esTablet  ? 320: Math.main(Width*0.72, 300),
+        ancho: esTablet ? 320 : Math.max(width * 0.72, 300),
         paddingHorizontal: esTablet ? 32 : 16
     }
 }

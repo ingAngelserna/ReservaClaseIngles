@@ -1,0 +1,10 @@
+import { useContext } from "react";
+import { ReservaContext} from '../context/ReservasContext';
+
+export default function useReserva(){
+    const contexto =useContext(ReservaContext);
+    if(!contexto){
+        throw new error('useReserva debe usarse dentro de <ReservaProvider>');
+    }
+    return contexto; 
+}
