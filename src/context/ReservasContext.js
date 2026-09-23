@@ -13,7 +13,7 @@ export function ReservaProvider({children}){
     useEffect(()=>{
         const cargar = async () =>{
             try{
-                const guardado =await AsyncStorage.getItem(CLAVE_RESERVAS)
+                const guardado = await AsyncStorage.getItem(CLAVE_RESERVAS)
                 if(guardado !== null){
                     setReservas(JSON.parse(guardado))
                 }
@@ -26,4 +26,43 @@ export function ReservaProvider({children}){
         };
         cargar();
     },[])
-}
+
+
+    useEffect(()=>{
+        if(cargando) return;
+        AsyncStorage.setItem(CLAVE_RESERVAS, JSON.stringify(reservas)).catch((error)=>
+            console.log('Error guardando reservas: ', error)
+        
+        );
+
+    },[reservas, cargando]);
+
+
+    const agregarReserva = useCallback((clase, horario)=>{
+        const nueva ={
+            id: clase.id + '-' + horario,
+            titulo: clase.titulo,
+            nivel: clase.nivel,
+            profesor: clase.profesor.nombre + '' + clase.profesor.apellido,
+            precio: clase.precio,
+            horario,
+            creadoEn: new Date().toISOString(),
+        }
+        let resultados = {ok: true};
+        setReservas((prev)=>{
+            if(prev.some((r)=> r.id === nueva.id)){
+                resultados = {ok: false}
+                return prev;
+            }
+            return [nueva, ...prev]
+        
+        })
+
+    },[]);
+
+
+
+
+
+
+};
