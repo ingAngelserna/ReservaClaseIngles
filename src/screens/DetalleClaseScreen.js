@@ -1,40 +1,51 @@
-  import React, { useState } from 'react';
+ import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { formatearPrecio } from '../data/clases';
 
-// 1. Importamos el hook global de reservas que ya arreglaste
-import useReserva from '../hooks/useReserva'; // Ajusta la ruta si es necesario (ej: '../context/useReserva')
+import useReserva from '../hooks/useReserva';
+import useAlmacenamiento from '../hooks/useAlmacenamiento'; 
 
 export default function DetalleClaseScreen({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { clase } = route.params;
 
-  // 2. Extraemos la función agregarReserva del contexto
   const { agregarReserva } = useReserva();
+  
+  // Extraemos el perfil del almacenamiento local
+  const [perfilGuardado, , listo] = useAlmacenamiento('@perfil_usuario', null);
 
   const [cupos, setCupos] = useState(clase.cupos);
-  // 3. Nuevo estado para guardar qué horario elige el usuario
   const [horarioSeleccionado, setHorarioSeleccionado] = useState(null);
 
-  // 4. Lógica de reserva actualizada
   const manejarReserva = () => {
+    // VALIDACIÓN 1: ¿Tiene una cuenta creada?
+    if (!perfilGuardado) {
+      // Alerta simple corregida, sin intentar navegar a otra pantalla
+      Alert.alert(
+        'Cuenta requerida', 
+        'Debes registrar tus datos en la pestaña de Perfil antes de poder reservar una clase.'
+      );
+      return; 
+    }
+
+    // VALIDACIÓN 2: ¿Seleccionó un horario?
     if (!horarioSeleccionado) {
       Alert.alert('Falta horario', 'Por favor selecciona un horario para tu clase.');
       return;
     }
 
+    // Lógica de reserva si pasa las validaciones
     if (cupos > 0) {
-      // Intentamos guardar la reserva en el Contexto Global
       const resultado = agregarReserva(clase, horarioSeleccionado);
       
       if (resultado.ok) {
         setCupos(cupos - 1);
         Alert.alert('¡Reserva exitosa!', 'Tu clase ha sido guardada en la pestaña de Reservas.');
-        navigation.goBack(); // Regresamos a la lista de clases
+        navigation.goBack(); 
       } else {
-        // Si resultado.ok es falso, significa que el id (clase + horario) ya existe o se cruza
-        Alert.alert('Cruce de horarios', resultado.mensaje);
+        Alert.alert('No se pudo reservar', resultado.mensaje);
       }
     }
   };
@@ -74,7 +85,6 @@ export default function DetalleClaseScreen({ route, navigation }) {
             </View>
           </View>
 
-          {/* 5. Selector visual de horarios */}
           <View style={styles.seccionHorarios}>
             <Text style={styles.subtitulo}>Selecciona un horario:</Text>
             <View style={styles.horariosGrid}>
@@ -108,9 +118,12 @@ export default function DetalleClaseScreen({ route, navigation }) {
           onPress={manejarReserva}
           disabled={cupos === 0}
         >
-          <Text style={styles.textoBoton}>
-            {cupos > 0 ? 'Reservar clase' : 'Sin cupos'}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="calendar-outline" size={20} color={cupos > 0 ? "#fff" : "#888"} style={{ marginRight: 8 }} />
+            <Text style={styles.textoBoton}>
+              {cupos > 0 ? 'Reservar clase' : 'Sin cupos'}
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
     </View>
