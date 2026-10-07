@@ -26,6 +26,13 @@ export default function PerfilScreen() {
       Alert.alert('Faltan datos', 'Por favor, llena todos los campos.');
       return;
     }
+
+    // NUEVA VALIDACIÓN: Verifica que el correo tenga @ y un punto
+    if (!correo.includes('@') || !correo.includes('.')) {
+      Alert.alert('Correo inválido', 'Por favor, ingresa una dirección de correo electrónico válida (debe contener "@" y ".").');
+      return;
+    }
+
     actualizarPerfil({ nombre, correo, telefono });
     Alert.alert('Éxito', 'Tu perfil ha sido guardado correctamente.');
   };
