@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
-// Importamos tu hook para persistencia local. 
-// (Asegúrate de que la ruta '../hooks/useAlmacenamiento' sea correcta según tus carpetas)
 import useAlmacenamiento from '../hooks/useAlmacenamiento'; 
-import { colors, typography, spacing } from '../theme/index';
+import { colors, typography, spacing, radius } from '../theme/index';
 
 export default function PerfilScreen() {
-  // Inicializamos la base de datos local para el perfil
   const [perfilGuardado, actualizarPerfil, listo] = useAlmacenamiento('@perfil_usuario', null);
   
-  // Estados para los campos de texto
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
   const [telefono, setTelefono] = useState('');
 
-  // Cuando el almacenamiento local cargue los datos, los ponemos en los inputs
+  // Llenar los campos si el usuario ya se había registrado antes
   useEffect(() => {
     if (perfilGuardado) {
       setNombre(perfilGuardado.nombre || '');
@@ -24,18 +20,37 @@ export default function PerfilScreen() {
     }
   }, [perfilGuardado]);
 
-  // Función del botón Save
+  // Guardar perfil
   const handleSave = () => {
     if (!nombre || !correo || !telefono) {
       Alert.alert('Faltan datos', 'Por favor, llena todos los campos.');
       return;
     }
-    // Guardamos la info en el disco
     actualizarPerfil({ nombre, correo, telefono });
     Alert.alert('Éxito', 'Tu perfil ha sido guardado correctamente.');
   };
 
-  // Pantalla de espera mientras el disco lee los datos
+  // NUEVA FUNCIÓN: Borrar perfil para reiniciar pruebas
+  const handleBorrar = () => {
+    Alert.alert(
+      "Borrar Perfil",
+      "¿Seguro que quieres limpiar los datos para probar de nuevo?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { 
+          text: "Sí, borrar", 
+          style: "destructive",
+          onPress: () => {
+            actualizarPerfil(null);
+            setNombre('');
+            setCorreo('');
+            setTelefono('');
+          }
+        }
+      ]
+    );
+  };
+
   if (!listo) {
     return (
       <View style={styles.pantallaCentrada}>
@@ -44,14 +59,12 @@ export default function PerfilScreen() {
     );
   }
 
-  // Si perfilGuardado existe, significa que ya se registró antes
   const yaRegistrado = perfilGuardado !== null;
 
   return (
     <View style={styles.pantalla}>
       <Text style={[typography.titulo, styles.titulo]}>Mi Perfil</Text>
 
-      {/* Input de Nombre: Se bloquea y cambia de color si ya está registrado */}
       <TextInput 
         style={[styles.input, yaRegistrado && styles.inputBloqueado]} 
         placeholder="Nombre completo" 
@@ -77,10 +90,16 @@ export default function PerfilScreen() {
         keyboardType="phone-pad"
       />
 
-      {/* Botón Save como pide el esquema */}
       <TouchableOpacity style={styles.boton} onPress={handleSave}>
         <Text style={styles.textoBoton}>Save</Text>
       </TouchableOpacity>
+
+      {/* NUEVO BOTÓN: Solo aparece si el usuario ya se registró */}
+      {yaRegistrado && (
+        <TouchableOpacity style={[styles.boton, { backgroundColor: '#DC2626', marginTop: 10 }]} onPress={handleBorrar}>
+          <Text style={styles.textoBoton}>BORAR PERFIL</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -99,13 +118,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titulo: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.XL || 24,
     textAlign: 'center',
   },
   input: {
     borderWidth: 1,
     borderColor: colors.borde || '#ccc',
-    borderRadius: 8,
+    borderRadius: radius?.sm || 8,
     padding: spacing.md,
     marginBottom: spacing.lg,
     backgroundColor: colors.superficie,
@@ -113,13 +132,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   inputBloqueado: {
-    backgroundColor: '#e2e8f0', // Un tono gris para que parezca deshabilitado
+    backgroundColor: '#e2e8f0', 
     color: '#64748b',
   },
   boton: {
     backgroundColor: colors.primario || '#007BFF', 
     paddingVertical: spacing.md,
-    borderRadius: 25,
+    borderRadius: radius?.full || 25,
     alignItems: 'center',
     marginTop: spacing.sm,
   },
