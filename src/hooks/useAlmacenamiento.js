@@ -1,12 +1,12 @@
-import { useState, useEffect,useCallback, use } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function useAlmacenamiento(clave, valorInicial){
     const [valor, setValor] = useState(valorInicial);
-    const [listo, setListo] = useState(false)
+    const [listo, setListo] = useState(false);
 
     useEffect(()=> {
-        let activo = true; // vandera para saber si esta guardando o montando el componente 
+        let activo = true; 
 
         AsyncStorage.getItem(clave)
         .then((guardando)=>{
@@ -25,14 +25,12 @@ export default function useAlmacenamiento(clave, valorInicial){
             setValor(nuevoValor);
             try{
                 await AsyncStorage.setItem(clave, JSON.stringify(nuevoValor));
-
             }catch(error){
-                console.log('Error guardando' + clave,error)
+                console.log('Error guardando' + clave,error);
             }
         }, [clave]
-
     );
 
-    
-        
-};
+    // ESTE RETORNO REVIVE LA PANTALLA DE PERFIL
+    return [valor, actualizar, listo];
+}
