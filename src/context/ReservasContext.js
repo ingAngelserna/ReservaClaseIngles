@@ -42,21 +42,34 @@ export function ReservaProvider({children}){
             horario,
             creadoEn: new Date().toISOString(),
         };
-        let resultados = {ok: true};
+        
+        let resultados = {ok: true, mensaje: ''};
+        
         setReservas((prev)=>{
-            if(prev.some((r)=> r.id === nueva.id)){
-                resultados = {ok: false};
+            // 1. Verificamos si hay ALGUNA clase (así sea distinta) a la misma hora
+            const claseCruzada = prev.find((r) => r.horario === horario);
+            
+            if(claseCruzada){
+                resultados = {
+                    ok: false, 
+                    mensaje: `Cruce de horarios: Ya tienes la clase "${claseCruzada.titulo}" apartada para este mismo día y hora.`
+                };
                 return prev;
             }
+            
             return [nueva, ...prev];
         });
+        
         return resultados;
     },[]);
 
-    // ESTO ES LO QUE DEVUELVE LA VISTA Y QUITA LA PANTALLA NEGRA
+    const eliminarReserva = useCallback((idReserva) => {
+        setReservas((prev) => prev.filter((r) => r.id !== idReserva));
+    }, []);
+
     return (
-        <ReservaContext.Provider value={{ reservas, agregarReserva, cargando }}>
+        <ReservaContext.Provider value={{ reservas, agregarReserva, eliminarReserva, cargando }}>
             {children}
         </ReservaContext.Provider>
     );
-}
+}   

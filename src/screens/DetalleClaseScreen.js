@@ -34,7 +34,7 @@ export default function DetalleClaseScreen({ route, navigation }) {
         navigation.goBack(); // Regresamos a la lista de clases
       } else {
         // Si resultado.ok es falso, significa que el id (clase + horario) ya existe o se cruza
-        Alert.alert('Cruce de horarios', 'Ya tienes una reserva para esta clase en este mismo horario.');
+        Alert.alert('Cruce de horarios', resultado.mensaje);
       }
     }
   };
