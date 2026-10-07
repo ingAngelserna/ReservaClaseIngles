@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, Image } from 'react-native';
 
 import useAlmacenamiento from '../hooks/useAlmacenamiento'; 
-import useReserva from '../hooks/useReserva'; 
 import { colors, typography, spacing, radius } from '../theme/index';
 
 export default function PerfilScreen() {
   const [perfilGuardado, actualizarPerfil, listo] = useAlmacenamiento('@perfil_usuario', null);
-  const { reservas } = useReserva();
   
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState('');
@@ -27,7 +25,6 @@ export default function PerfilScreen() {
       return;
     }
 
-    // NUEVA VALIDACIÓN: Verifica que el correo tenga @ y un punto
     if (!correo.includes('@') || !correo.includes('.')) {
       Alert.alert('Correo inválido', 'Por favor, ingresa una dirección de correo electrónico válida (debe contener "@" y ".").');
       return;
@@ -66,20 +63,17 @@ export default function PerfilScreen() {
   }
 
   const yaRegistrado = perfilGuardado !== null;
-  const cantidadReservas = reservas ? reservas.length : 0;
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.pantalla}>
         <Text style={[typography.titulo, styles.titulo]}>Mi Perfil</Text>
 
-        {yaRegistrado && (
-          <View style={styles.tarjetaEstadisticas}>
-            <Text style={styles.textoEstadisticas}>
-              Hola {nombre.split(' ')[0]}, tienes {cantidadReservas} {cantidadReservas === 1 ? 'clase reservada' : 'clases reservadas'}.
-            </Text>
-          </View>
-        )}
+        {/* NUEVA IMAGEN DE AVATAR */}
+        <Image 
+          source={{ uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }} 
+          style={styles.avatar} 
+        />
 
         <TextInput 
           style={[styles.input, yaRegistrado && styles.inputBloqueado]} 
@@ -123,19 +117,17 @@ export default function PerfilScreen() {
 const styles = StyleSheet.create({
   pantallaCentrada: { flex: 1, backgroundColor: colors.fondo, justifyContent: 'center', alignItems: 'center' },
   pantalla: { flex: 1, backgroundColor: colors.fondo, padding: spacing.lg, justifyContent: 'center' },
-  titulo: { marginBottom: spacing.sm, textAlign: 'center' },
+  titulo: { marginBottom: spacing.md, textAlign: 'center' },
   
-  tarjetaEstadisticas: {
-    backgroundColor: '#10B981', 
-    padding: spacing.md,
-    borderRadius: radius?.md || 8,
-    marginBottom: spacing.lg,
-    alignItems: 'center'
-  },
-  textoEstadisticas: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 15,
+  // Estilo para que la imagen se vea circular y centrada
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    alignSelf: 'center',
+    marginBottom: spacing.xl || 30,
+    borderWidth: 2,
+    borderColor: colors.primario || '#007BFF',
   },
 
   input: { borderWidth: 1, borderColor: colors.borde || '#ccc', borderRadius: radius?.sm || 8, padding: spacing.md, marginBottom: spacing.lg, backgroundColor: colors.superficie, color: colors.texto, fontSize: 16 },
